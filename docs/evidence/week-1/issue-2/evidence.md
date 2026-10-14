@@ -51,6 +51,6 @@ temizliği senaryolarını doğruladım.
 
 ### Kısıt ve Mimari Kontrol Beyanı
 
-- [x] Yalnızca K2 kapsamındaki `transfer/` ve `storage/` kodlarında değişiklik yapıldı.
+- [x] Yalnızca atanan `transfer/`, `storage/` ve bu görev kanıt dosyasında çalışıldı.
 - [x] Uygulama kodunda `print()` kullanılmadı.
-- [x] Değiştirilen kod gözden geçirildi; transfer ve storage akışı incelendi.
+- [x] Değiştirilen kod satır satır gözden geçirildi; çalışma mantığı doğrulandı.
