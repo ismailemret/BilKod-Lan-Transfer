@@ -72,13 +72,19 @@ def save_file(
             delete=False,
         ) as temporary_file:
             temporary_path = Path(temporary_file.name)
-            for chunk in chunks:
-                data = chunk.data if isinstance(chunk, TransferChunk) else chunk
-                if not isinstance(data, bytes):
-                    raise TypeError("Each chunk must contain bytes")
-                if isinstance(chunk, TransferChunk) and chunk.chunk_size_bytes != len(data):
-                    raise ValueError("TransferChunk size does not match its data")
-                temporary_file.write(data)
+            chunk_iterator = iter(chunks)
+            try:
+                for chunk in chunk_iterator:
+                    data = chunk.data if isinstance(chunk, TransferChunk) else chunk
+                    if not isinstance(data, bytes):
+                        raise TypeError("Each chunk must contain bytes")
+                    if isinstance(chunk, TransferChunk) and chunk.chunk_size_bytes != len(data):
+                        raise ValueError("TransferChunk size does not match its data")
+                    temporary_file.write(data)
+            finally:
+                close_iterator = getattr(chunk_iterator, "close", None)
+                if callable(close_iterator):
+                    close_iterator()
 
         os.replace(temporary_path, destination)
         return destination
@@ -91,3 +97,12 @@ def save_file(
                 temporary_path.unlink()
             except OSError:
                 logger.exception("Unable to remove temporary file: %s", temporary_path)
+
+
+def save_chunks_to_temp_file(
+    destination_directory: str | Path,
+    filename: str,
+    chunks: Iterable[bytes | TransferChunk],
+) -> Path:
+    """Write chunks in order to a safely named ``.part`` file."""
+    return save_file(destination_directory, f"{filename}.part", chunks)
