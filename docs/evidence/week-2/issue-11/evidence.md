@@ -39,7 +39,7 @@ test_invalid_destination_is_logged_and_raised ... ok
 test_large_file_is_read_in_bounded_chunks_and_saved_to_part ... ok
 test_missing_source_is_logged_and_raised ... ok
 
-Ran 4 tests in 0.055s
+Ran 4 tests in 0.123s
 OK
 Error checks: missing source/destination logged and raised; failed stream closed and temp cleaned
 Demo: 1,048,832 bytes; 17 chunks; max 65,536; last 256 bytes
