@@ -2,6 +2,7 @@
 
 import hashlib
 import uuid
+from collections.abc import Iterator
 from pathlib import Path
 
 from contracts.models import TransferOffer
@@ -9,7 +10,21 @@ from utils.logger import get_logger
 
 
 DEFAULT_HASH_CHUNK_SIZE = 1024 * 1024
+TRANSFER_CHUNK_SIZE_BYTES = 64 * 1024
 logger = get_logger(__name__)
+
+
+def iter_file_chunks(file_path: str | Path) -> Iterator[bytes]:
+    """Yield file contents in chunks no larger than 64 KB."""
+    path = Path(file_path)
+
+    try:
+        with path.open("rb") as file:
+            while chunk := file.read(TRANSFER_CHUNK_SIZE_BYTES):
+                yield chunk
+    except OSError:
+        logger.exception("Unable to read file in transfer chunks: %s", path)
+        raise
 
 
 def calculate_file_sha256(
