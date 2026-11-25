@@ -10,13 +10,17 @@ PORT = 5050
 logger = get_logger(__name__)
 
 
-def connect() -> ConnectionStatus:
+def connect(
+    server_host: str = SERVER_HOST,
+    port: int = PORT,
+    timeout: float = 10,
+) -> ConnectionStatus:
     status = ConnectionStatus.DISCONNECTED
 
     try:
         status = ConnectionStatus.CONNECTING
 
-        with socket.create_connection((SERVER_HOST, PORT), timeout=10,) as connection:
+        with socket.create_connection((server_host, port), timeout=timeout) as connection:
             connection.sendall(b"PING\n")
 
             with connection.makefile("rb") as reader:
